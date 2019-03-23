@@ -1,6 +1,15 @@
 package employeemanager.gui;
 
 import employeemanager.models.Employee;
+import employeemanager.models.Position;
+import static employeemanager.models.Position.Accountant;
+import static employeemanager.models.Position.Cleaner;
+import static employeemanager.models.Position.HRManager;
+import static employeemanager.models.Position.Programmer;
+import employeemanager.models.implementation.Accountant;
+import employeemanager.models.implementation.Cleaner;
+import employeemanager.models.implementation.HRManager;
+import employeemanager.models.implementation.Programmer;
 import employeemanager.service.EmployeeService;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,6 +26,16 @@ public class Main extends javax.swing.JFrame {
         } else {
             // display the error
         }
+    }
+    
+    public static void editEmployee(int selectedIndex, String newName, String newSurname, String newPosition) {
+        DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
+        employeeListModel.setValueAt(newName, selectedIndex, 1);
+        employeeListModel.setValueAt(newSurname, selectedIndex, 2);
+        employeeListModel.setValueAt(newPosition, selectedIndex, 3);
+        Integer employeeId = (Integer) employeeListModel.getValueAt(selectedIndex, 0);
+        EmployeeService.edit(employeeId, newName, newSurname, newPosition);
+        
     }
 
     /**
@@ -239,7 +258,39 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_addEmployeeBtnActionPerformed
 
     private void editEmployeeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editEmployeeBtnActionPerformed
-        
+         int selectedRow = Main.employeesListTable.getSelectedRow();
+        if (selectedRow != -1) {
+            DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
+            Employee employeeToEdit = null;
+            String name = employeeListModel.getValueAt(selectedRow, 1).toString();
+            String surname = employeeListModel.getValueAt(selectedRow, 2).toString();
+            String position = employeeListModel.getValueAt(selectedRow, 3).toString();
+            switch (Position.getByPositionName(position)) {
+                case Accountant: {
+                    employeeToEdit = new Accountant(name, surname);
+                    break;
+                }
+                case HRManager: {
+                    employeeToEdit = new HRManager(name, surname);
+                    break;
+                }
+                case Programmer: {
+                    employeeToEdit = new Programmer(name, surname);
+                    break;
+                }
+                case Cleaner: {
+                    employeeToEdit = new Cleaner(name, surname);
+                    break;
+                }
+                default:
+                // unknown data
+            }
+            if (employeeToEdit != null) {
+                Edit editWindow = new Edit(selectedRow, employeeToEdit);
+                editWindow.setVisible(true);
+            }
+
+        }
     }//GEN-LAST:event_editEmployeeBtnActionPerformed
 
     private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBtnActionPerformed
