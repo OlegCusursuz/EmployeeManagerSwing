@@ -6,6 +6,7 @@
 package employeemanager.gui;
 
 import employeemanager.models.Employee;
+import employeemanager.models.Position;
 import javax.swing.ComboBoxModel;
 
 /**
@@ -13,23 +14,16 @@ import javax.swing.ComboBoxModel;
  * @author sscerbatiuc
  */
 public class Edit extends javax.swing.JFrame {
+    
+    private Employee emp;
 
-    private int editedIndex;
-
-    /**
-     * Creates new form Edit
-     */
-    public Edit() {
-        initComponents();
-    }
-
-    public Edit(int index, Employee emp) {
+    
+    public Edit(Employee emp) {
         initComponents();
         nameTxtField.setText(emp.getName());
         surnameTxtField.setText(emp.getSurname());
-        ComboBoxModel<String> model = positionComboBox.getModel();
-        model.setSelectedItem(emp.getPosition().toString());
-        this.editedIndex = index;
+        positionComboBox.setSelectedItem(emp.getPosition().toString());
+        this.emp = emp;
     }
 
     /**
@@ -49,7 +43,8 @@ public class Edit extends javax.swing.JFrame {
         positionComboBox = new javax.swing.JComboBox<>();
         saveBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Edit");
 
         jLabel1.setText("Name");
 
@@ -108,9 +103,12 @@ public class Edit extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
-    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
 
+    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
+        String newName = nameTxtField.getText();
+        String newSurname = surnameTxtField.getText();
+        String position = positionComboBox.getSelectedItem().toString();
+        Main.editEmployee(this.emp.getId(), newName, newSurname, position);
     }//GEN-LAST:event_saveBtnActionPerformed
 
     /**
@@ -143,7 +141,7 @@ public class Edit extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Edit().setVisible(true);
+                new Edit(null).setVisible(true);
             }
         });
     }

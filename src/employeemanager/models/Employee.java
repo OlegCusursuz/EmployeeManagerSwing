@@ -20,6 +20,7 @@ public class Employee {
         this.surname = surname;
         this.position = position;
     }
+    
 
     public String getName() {
         return name;
@@ -33,7 +34,7 @@ public class Employee {
         return position;
     }
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 

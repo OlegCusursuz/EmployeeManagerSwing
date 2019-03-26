@@ -1,15 +1,6 @@
 package employeemanager.gui;
 
 import employeemanager.models.Employee;
-import employeemanager.models.Position;
-import static employeemanager.models.Position.Accountant;
-import static employeemanager.models.Position.Cleaner;
-import static employeemanager.models.Position.HRManager;
-import static employeemanager.models.Position.Programmer;
-import employeemanager.models.implementation.Accountant;
-import employeemanager.models.implementation.Cleaner;
-import employeemanager.models.implementation.HRManager;
-import employeemanager.models.implementation.Programmer;
 import employeemanager.service.EmployeeService;
 import javax.swing.table.DefaultTableModel;
 
@@ -19,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Main extends javax.swing.JFrame {
 
+    private final int ID = 0;
 
     public static void addEmployee(Employee emp) {
         if (emp.isValid()) {
@@ -27,15 +19,12 @@ public class Main extends javax.swing.JFrame {
             // display the error
         }
     }
-    
-    public static void editEmployee(int selectedIndex, String newName, String newSurname, String newPosition) {
+
+    public static void editEmployee(int idEmployee, String newName, String newSurname, String newPosition) {
         DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
-        employeeListModel.setValueAt(newName, selectedIndex, 1);
-        employeeListModel.setValueAt(newSurname, selectedIndex, 2);
-        employeeListModel.setValueAt(newPosition, selectedIndex, 3);
-        Integer employeeId = (Integer) employeeListModel.getValueAt(selectedIndex, 0);
-        EmployeeService.edit(employeeId, newName, newSurname, newPosition);
-        
+        employeeListModel.setValueAt(newName, idEmployee - 1, 1);
+        EmployeeService.edit(idEmployee, newName, newSurname, newPosition);
+
     }
 
     /**
@@ -48,11 +37,10 @@ public class Main extends javax.swing.JFrame {
     private static void addEmployeeToList(Employee emp) {
         DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
         int employeeId = employeeListModel.getRowCount() + 1;
-        employeeListModel.addRow(new Object[]{employeeId, emp.getName() + emp.getSurname(), emp.getSurname(), emp.getPosition().toString()});
+        employeeListModel.addRow(new Object[]{employeeId, emp.getName(), emp.getSurname(), emp.getPosition().toString()});
         emp.setId(employeeId);
         EmployeeService.getEmployeesList().add(emp);
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -141,6 +129,11 @@ public class Main extends javax.swing.JFrame {
         });
 
         jButton3.setText("Delete employee");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Actions");
 
@@ -196,7 +189,7 @@ public class Main extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
@@ -258,44 +251,31 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_addEmployeeBtnActionPerformed
 
     private void editEmployeeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editEmployeeBtnActionPerformed
-         int selectedRow = Main.employeesListTable.getSelectedRow();
+        int selectedRow = Main.employeesListTable.getSelectedRow();
         if (selectedRow != -1) {
             DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
-            Employee employeeToEdit = null;
-            String name = employeeListModel.getValueAt(selectedRow, 1).toString();
-            String surname = employeeListModel.getValueAt(selectedRow, 2).toString();
-            String position = employeeListModel.getValueAt(selectedRow, 3).toString();
-            switch (Position.getByPositionName(position)) {
-                case Accountant: {
-                    employeeToEdit = new Accountant(name, surname);
-                    break;
-                }
-                case HRManager: {
-                    employeeToEdit = new HRManager(name, surname);
-                    break;
-                }
-                case Programmer: {
-                    employeeToEdit = new Programmer(name, surname);
-                    break;
-                }
-                case Cleaner: {
-                    employeeToEdit = new Cleaner(name, surname);
-                    break;
-                }
-                default:
-                // unknown data
-            }
-            if (employeeToEdit != null) {
-                Edit editWindow = new Edit(selectedRow, employeeToEdit);
-                editWindow.setVisible(true);
-            }
-
+            Object value = employeeListModel.getValueAt(selectedRow, ID);
+            Integer employeeId = Integer.parseInt(value.toString());
+            Employee foundEmployee = EmployeeService.getById(employeeId);
+            Edit editWindow = new Edit(foundEmployee);
+            editWindow.setVisible(true);
         }
     }//GEN-LAST:event_editEmployeeBtnActionPerformed
 
     private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBtnActionPerformed
-    
+
     }//GEN-LAST:event_printBtnActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int selectedRow = Main.employeesListTable.getSelectedRow();
+        if (selectedRow != -1) {
+            DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
+            // EmployeeService
+            // read id
+            // EmployeeService.delete(id)
+            employeeListModel.removeRow(selectedRow);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

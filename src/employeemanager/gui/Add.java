@@ -7,6 +7,7 @@ package employeemanager.gui;
 
 import employeemanager.models.Employee;
 import employeemanager.models.Position;
+import employeemanager.service.EmployeeService;
 
 /**
  *
@@ -64,6 +65,9 @@ public class Add extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(91, 91, 91)
+                        .addComponent(btnAdd))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
@@ -72,10 +76,7 @@ public class Add extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(surnameTxtField)
                             .addComponent(nameTxtField)
-                            .addComponent(positionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(91, 91, 91)
-                        .addComponent(btnAdd)))
+                            .addComponent(positionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -106,6 +107,7 @@ public class Add extends javax.swing.JFrame {
         Employee emp = new Employee(nameTxtField.getText(),
                 surnameTxtField.getText(),
                 Position.getByPositionName(profession));
+        EmployeeService.getEmployeesList().add(emp);
         Main.addEmployee(emp);
     }//GEN-LAST:event_btnAddActionPerformed
 
