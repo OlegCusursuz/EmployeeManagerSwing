@@ -13,14 +13,17 @@ public class Employee {
 
     public Employee() {
     }
-    
 
     public Employee(String name, String surname, Position position) {
         this.name = name;
         this.surname = surname;
         this.position = position;
     }
-    
+
+    public Employee(Integer id, String name, String surname, Position position) {
+        this(name, surname, position);
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -60,7 +63,7 @@ public class Employee {
 
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("Add functionality");
+        return "Employee{" + "id=" + id + ", name=" + name + ", surname=" + surname + ", position=" + position + '}';
     }
-
+    
 }
