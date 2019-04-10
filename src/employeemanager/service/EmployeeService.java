@@ -2,6 +2,7 @@ package employeemanager.service;
 
 import employeemanager.models.Employee;
 import employeemanager.models.Position;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -10,35 +11,27 @@ import java.util.ArrayList;
  */
 public class EmployeeService {
 
-    private static final ArrayList<Employee> EMPLOYEE_LIST = new ArrayList<>();
-
-    public static ArrayList<Employee> getEmployeesList() {
-        return EMPLOYEE_LIST;
-    }
+    private static EmployeeDao empDao = new EmployeeDao();
 
     public static Employee getById(Integer id) {
-        for (Employee emp : EMPLOYEE_LIST) {
-            if (emp.getId().equals(id)) {
-                return emp;
-            }
-        }
         return null;
     }
 
     public static void edit(Integer employeeId, String newName, String newSurname, String newPosition) {
-        int index;
-        for(index = 0; index < EMPLOYEE_LIST.size(); index++ ){
-            if(employeeId.equals(EMPLOYEE_LIST.get(index).getId())){
-                break;
-            }
-        }
-        EMPLOYEE_LIST.get(index).setName(newName);
-        EMPLOYEE_LIST.get(index).setSurname(newSurname);
+    }
+
+    public static void add(Employee emp) {
+        empDao.add(emp);
+    }
+
+    public static ArrayList<Employee> getAll() {
+        return empDao.getAll();
+    }
+
+    public static Employee getByParams(String... params) {
+       return empDao.getEmployee(params[0], params[1], params[2]);
     }
 
     private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {
-        for (Employee emp : EMPLOYEE_LIST) {
-            System.out.println(emp);
-        }
     }
 }

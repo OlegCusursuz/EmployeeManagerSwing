@@ -28,7 +28,7 @@ public class EmployeeDao {
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
     }
 
-    public ArrayList<Employee> getAll() throws SQLException {
+    public ArrayList<Employee> getAll() {
         String sql = "SELECT id, name, surname, position FROM app.Employee";
         try (Connection conn = connect();
                 Statement dbStatement = conn.createStatement();
@@ -44,12 +44,13 @@ public class EmployeeDao {
             return empList;
         } catch (SQLException ex) {
             System.err.println("Caught an error trying to get all the employees");
-            throw ex;
         }
+        return null;
     }
 
-    public int add(Employee emp) throws SQLException {
+    public int add(Employee emp) {
         String insertSql = "INSERT INTO app.employee(name,surname,position) VALUES (?,?,?)";
+        // = "INSERT INTO app.employee(name,surname,position) VALUES ('Ion','Mocanu','Programmer')";
         try (Connection conn = connect();
                 PreparedStatement dbStatement = conn.prepareStatement(insertSql)) {
 
@@ -62,8 +63,8 @@ public class EmployeeDao {
             return affectedRows;
         } catch (SQLException ex) {
             System.err.println("Caught an error trying to insert the employee");
-            throw ex;
         }
+        return -1;
     }
 
     public int add(ArrayList<Employee> empList) throws SQLException {
@@ -104,6 +105,28 @@ public class EmployeeDao {
             System.err.println("Caught an error trying to insert the employees");
             throw ex;
         }
+    }
+    
+    public Employee getEmployee(String name, String surname, String position){
+        String sql = "SELECT id, name, surname, position FROM app.employee "
+                + "WHERE name=? AND surname=? AND position=?";
+        try(Connection conn = connect(); PreparedStatement prepStmt = conn.prepareStatement(sql)){
+            prepStmt.setString(1, name);
+            prepStmt.setString(2, surname);
+            prepStmt.setString(3, position);
+            ResultSet rs = prepStmt.executeQuery();
+            Employee emp = null;
+            while(rs.next()){
+                emp = new Employee(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("surname"), 
+                        Position.getByPositionName(rs.getString("position")));
+            }
+            return emp;
+        } catch (SQLException ex){
+            System.err.println("Error trying to get one employee");
+        }
+        return null;
     }
 
     public int remove(Employee emp) throws SQLException {

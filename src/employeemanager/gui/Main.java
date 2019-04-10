@@ -2,6 +2,11 @@ package employeemanager.gui;
 
 import employeemanager.models.Employee;
 import employeemanager.service.EmployeeService;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,7 +29,6 @@ public class Main extends javax.swing.JFrame {
         DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
         employeeListModel.setValueAt(newName, idEmployee - 1, 1);
         EmployeeService.edit(idEmployee, newName, newSurname, newPosition);
-
     }
 
     /**
@@ -32,6 +36,16 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
+        this.loadEmployees();
+    }
+
+    private void loadEmployees() {
+        ArrayList<Employee> all = EmployeeService.getAll();
+        DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
+        for (Employee emp : all) {
+            int employeeId = employeeListModel.getRowCount() + 1;
+            employeeListModel.addRow(new Object[]{employeeId, emp.getName(), emp.getSurname(), emp.getPosition().toString()});
+        }
     }
 
     private static void addEmployeeToList(Employee emp) {
@@ -39,7 +53,7 @@ public class Main extends javax.swing.JFrame {
         int employeeId = employeeListModel.getRowCount() + 1;
         employeeListModel.addRow(new Object[]{employeeId, emp.getName(), emp.getSurname(), emp.getPosition().toString()});
         emp.setId(employeeId);
-        EmployeeService.getEmployeesList().add(emp);
+        EmployeeService.add(emp);
     }
 
     /**
@@ -92,7 +106,7 @@ public class Main extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Id", "Name", "Surname", "Position"
+                "#", "Name", "Surname", "Position"
             }
         ) {
             Class[] types = new Class [] {
@@ -254,16 +268,19 @@ public class Main extends javax.swing.JFrame {
         int selectedRow = Main.employeesListTable.getSelectedRow();
         if (selectedRow != -1) {
             DefaultTableModel employeeListModel = (DefaultTableModel) Main.employeesListTable.getModel();
-            Object value = employeeListModel.getValueAt(selectedRow, ID);
-            Integer employeeId = Integer.parseInt(value.toString());
-            Employee foundEmployee = EmployeeService.getById(employeeId);
+            Object name = employeeListModel.getValueAt(selectedRow, 1);
+            Object surname = employeeListModel.getValueAt(selectedRow, 2);
+            Object position = employeeListModel.getValueAt(selectedRow, 3);
+            Employee foundEmployee = EmployeeService.getByParams(name.toString(),
+                    surname.toString(),
+                    position.toString());
             Edit editWindow = new Edit(foundEmployee);
             editWindow.setVisible(true);
         }
     }//GEN-LAST:event_editEmployeeBtnActionPerformed
 
     private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBtnActionPerformed
-
+        JOptionPane.showMessageDialog(this, "Hello World");
     }//GEN-LAST:event_printBtnActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
